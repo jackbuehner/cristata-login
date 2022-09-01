@@ -1,0 +1,16 @@
+:root {
+	--primary: #5438b9;
+	--primary-alt: #bfb4e5;
+	--textColor: #e0e0e0;
+	--textColorLight: #cccccc;
+	--textColorLighter: #bbbbbb;
+}
+
+html,
+body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+	background-color: var(--primary);
+}
