@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
 	import ErrorBox from '$components/ErrorBox.svelte';
 	import Form from '$components/Form.svelte';
@@ -31,7 +32,11 @@
 			// tenant does not exist
 		} else if (res.status === 200) {
 			error = '';
-			goto(`/${tenant}`);
+
+			const searchParams = $page.url.searchParams;
+			if (!searchParams.has('return')) searchParams.set('return', `https://cristata.app/${tenant}`);
+
+			goto(`/${tenant}?${searchParams}`);
 			// tenant exists
 		} else {
 			// something else went wrong
