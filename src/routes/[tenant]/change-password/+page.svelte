@@ -15,6 +15,15 @@
 	let newPassword: string;
 	let confirmNewPassword: string;
 
+	onMount(() => {
+		const searchParams = $page.url.searchParams;
+		if (searchParams.has('pe')) {
+			oldPassword = atob(searchParams.get('pe') || '');
+			searchParams.delete('pe');
+			history.replaceState({}, '', `/${$page.params.tenant}?${searchParams}`);
+		}
+	});
+
 	let error = '';
 
 	onMount(() => {

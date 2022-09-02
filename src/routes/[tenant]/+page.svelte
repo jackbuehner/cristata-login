@@ -8,6 +8,7 @@
 	import Header from '$components/Header.svelte';
 	import TextInput from '$components/TextInput.svelte';
 	import Button from '$components/Button.svelte';
+	import { onMount } from 'svelte';
 
 	export let data: PageData;
 
@@ -16,6 +17,21 @@
 	let username: string;
 	let password: string;
 
+	onMount(() => {
+		const searchParams = $page.url.searchParams;
+		if (searchParams.has('ue')) {
+			username = atob(searchParams.get('ue') || '');
+			searchParams.delete('ue');
+			history.replaceState({}, '', `/${data.tenant.name}?${searchParams}`);
+		}
+		if (searchParams.has('pe')) {
+			password = atob(searchParams.get('pe') || '');
+			searchParams.delete('pe');
+			history.replaceState({}, '', `/${data.tenant.name}?${searchParams}`);
+		}
+	});
+
+	//http://127.0.0.1:5173/paladin-news?return=https%3A%2F%2Fcristata.app%2Fpaladin-news&ue=amFja19idWVobmVy&pe=amFja19idWVobmVy
 	let error = '';
 
 	const handleSubmit = async (evt: SubmitEvent) => {
