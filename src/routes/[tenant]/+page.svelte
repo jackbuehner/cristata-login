@@ -52,11 +52,19 @@
 			cache: 'no-cache'
 		});
 
-		const json: Record<string, unknown> | undefined = await res.json();
+		const json: (Record<string, unknown> & { data: Record<string, unknown> }) | undefined =
+			await res.json();
 
 		if (res.status === 200) {
-			// sign in successful; return to app
-			returnToUrl();
+			if (json?.data?.next_step === 'change_password') {
+				// need to change password
+				const searchParams = $page.url.searchParams;
+				searchParams.set('pe', btoa(password));
+				goto(`/${data.tenant.name}/change-password/?${searchParams}`);
+			} else {
+				// sign in successful; return to app
+				returnToUrl();
+			}
 		} else if (res.status === 401) {
 			error = 'The provided username or password were incorrect.';
 		} else if (res.status === 429) {
