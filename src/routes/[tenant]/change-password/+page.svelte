@@ -1,0 +1,119 @@
+<script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import type { PageData } from './$types';
+
+	import ErrorBox from '$components/ErrorBox.svelte';
+	import Form from '$components/Form.svelte';
+	import Header from '$components/Header.svelte';
+	import TextInput from '$components/TextInput.svelte';
+	import { onMount } from 'svelte';
+
+	export let data: PageData;
+
+	let oldPassword: string;
+	let newPassword: string;
+	let confirmNewPassword: string;
+
+	let error = '';
+
+	onMount(() => {
+		if (!data.currentUser) goto(`/${$page.params.tenant}`);
+	});
+
+	const handleSubmit = async (evt: SubmitEvent) => {
+		evt.preventDefault();
+
+		if (!oldPassword) {
+			error = 'You need to type your existing password.';
+			return;
+		}
+
+		if (!newPassword) {
+			error = 'You need to type a new password.';
+			return;
+		}
+
+		if (!confirmNewPassword) {
+			error = 'You need to confirm your new password.';
+			return;
+		}
+
+		if (newPassword !== confirmNewPassword) {
+			error = 'The new passwords do not match.';
+			return;
+		}
+
+		const res = await fetch(`http://127.0.0.1:3000/v3/${$page.params.tenant}`, {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				query: `mutation { userPasswordChange(oldPassword: "${oldPassword}", newPassword: "${newPassword}") { _id } }`
+			})
+		});
+
+		if (!res.ok) {
+			// unknown server error
+			error = `<b>An unexpected error occured.</b> Error text: [${res.status}] ${res.statusText}`;
+		}
+
+		const json:
+			| { data: { userPasswordChange: { _id: string } }; errors: Record<string, unknown>[] }
+			| undefined = await res.json();
+
+		if (json?.data?.userPasswordChange) {
+			// password change successful; sign out
+			goto(`/${$page.params.tenant}/sign-out`);
+		} else if (
+			json?.errors &&
+			Array.isArray(json.errors) &&
+			typeof json.errors[0].message === 'string'
+		) {
+			// error changing password
+			if (json.errors[0].message === 'Password or username is incorrect') {
+				error = 'Incorrect current passsword';
+			} else {
+				error = json.errors[0].message;
+			}
+		} else {
+			// unknown server error
+			error = `<b>An unexpected error occured.</b> Error text: [${res.status}] ${res.statusText}`;
+		}
+	};
+</script>
+
+<Header
+	heading="Change your password"
+	caption="{data.currentUser?.name} ({data.currentUser?.email})"
+/>
+
+{#if error}
+	<ErrorBox html={error} />
+{/if}
+
+<Form {handleSubmit} submitText={'Change password'}>
+	<TextInput
+		bind:value={oldPassword}
+		label="Current password"
+		placeholder="Your current password"
+		password
+		autocomplete="current-password"
+	/>
+	<TextInput
+		bind:value={newPassword}
+		label="New Password"
+		placeholder="Your new password"
+		password
+		autocomplete="new-password"
+	/>
+	<TextInput
+		bind:value={confirmNewPassword}
+		label="Confirm new password"
+		placeholder="Your new password (again)"
+		password
+		autocomplete="new-password"
+	/>
+</Form>
