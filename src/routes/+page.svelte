@@ -34,6 +34,7 @@
 			if (!searchParams.has('return')) searchParams.set('return', `https://cristata.app/${tenant}`);
 
 			goto(`/${tenant}?${searchParams}`);
+			return;
 		}
 
 		NProgress.done();

@@ -69,6 +69,7 @@
 				// sign in successful; return to app
 				returnToUrl();
 			}
+			return;
 		}
 
 		NProgress.done();
