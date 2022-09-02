@@ -7,6 +7,7 @@
 		<CristataLogo width={26} />
 		Cristata
 	</div>
+	<div class="copyright">© Jack Buehner</div>
 </header>
 
 <article><slot /></article>
@@ -14,6 +15,10 @@
 <style>
 	header {
 		padding: 20px 40px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
 	}
 
 	div.brand {
@@ -27,6 +32,13 @@
 		gap: 16px;
 		color: #e0e0e0;
 		fill: currentColor;
+	}
+
+	div.copyright {
+		font-family: 'Rubik', sans-serif;
+		font-size: 14px;
+		font-weight: 400;
+		color: hsl(253deg 54% 70%);
 	}
 
 	article {
