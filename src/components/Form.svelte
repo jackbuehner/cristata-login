@@ -26,8 +26,11 @@
 		border: 2px solid var(--textColorLighter);
 		color: var(--textColorLighter);
 		border-radius: 3px;
+		outline: none;
+		transition: background-color 200ms;
 	}
-	form input[type='submit']:hover {
+	form input[type='submit']:hover,
+	form input[type='submit']:focus {
 		background-color: rgba(255, 255, 255, 0.06);
 	}
 	form input[type='submit']:active {
