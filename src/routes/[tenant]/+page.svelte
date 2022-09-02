@@ -134,6 +134,7 @@
 		max-width: 500px;
 		width: fit-content;
 		margin: 0 auto;
+		margin-top: 24px;
 		border: 1px solid hsl(253deg 49% 80%);
 		border-radius: 3px;
 		background-color: hsla(253deg 49% 80% / 10%);
