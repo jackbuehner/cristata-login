@@ -55,7 +55,7 @@
 
 		NProgress.start();
 
-		const res = await fetch(`http://127.0.0.1:3000/v3/${$page.params.tenant}`, {
+		const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/v3/${$page.params.tenant}`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {

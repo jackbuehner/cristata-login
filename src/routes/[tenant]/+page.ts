@@ -1,7 +1,7 @@
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params }) => {
-	const tenantRes = await fetch(`http://127.0.0.1:3000/v3/${params.tenant}`, {
+	const tenantRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/v3/${params.tenant}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -12,7 +12,7 @@ export const load: PageLoad = async ({ params }) => {
 	});
 	const tenantObj = (await tenantRes.json())?.data?.tenant;
 
-	const authRes = await fetch(`http://127.0.0.1:3000/auth`, {
+	const authRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json'

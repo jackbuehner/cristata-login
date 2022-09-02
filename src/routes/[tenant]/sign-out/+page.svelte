@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		fetch(`http://127.0.0.1:3000/auth/clear`, {
+		fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/clear`, {
 			method: 'post',
 			credentials: 'include',
 			headers: {

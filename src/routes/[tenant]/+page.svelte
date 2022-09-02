@@ -38,20 +38,23 @@
 		evt.preventDefault();
 		NProgress.start();
 
-		const res = await fetch(`http://127.0.0.1:3000/auth/local?tenant=${data.tenant.name}`, {
-			method: 'post',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				username,
-				password,
-				redirect: false
-			}),
-			redirect: 'follow',
-			cache: 'no-cache'
-		});
+		const res = await fetch(
+			`${import.meta.env.VITE_API_BASE_URL}/auth/local?tenant=${data.tenant.name}`,
+			{
+				method: 'post',
+				credentials: 'include',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					username,
+					password,
+					redirect: false
+				}),
+				redirect: 'follow',
+				cache: 'no-cache'
+			}
+		);
 
 		const json: (Record<string, unknown> & { data: Record<string, unknown> }) | undefined =
 			await res.json();
