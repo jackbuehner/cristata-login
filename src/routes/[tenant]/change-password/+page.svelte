@@ -27,7 +27,7 @@
 	let error = '';
 
 	onMount(() => {
-		if (!data.currentUser) goto(`/${$page.params.tenant}`);
+		if (!data.currentUser) goto(`/${$page.params.tenant}/?${$page.url.searchParams}`);
 	});
 
 	const handleSubmit = async (evt: SubmitEvent) => {
@@ -75,7 +75,7 @@
 
 		if (json?.data?.userPasswordChange) {
 			// password change successful; sign out
-			goto(`/${$page.params.tenant}/sign-out`);
+			goto(`/${$page.params.tenant}/sign-out?${$page.url.searchParams}`);
 		} else if (
 			json?.errors &&
 			Array.isArray(json.errors) &&

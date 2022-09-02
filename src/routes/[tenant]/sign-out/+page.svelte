@@ -13,7 +13,7 @@
 			},
 			cache: 'no-cache'
 		}).finally(() => {
-			goto(`/${$page.params.tenant}`);
+			goto(`/${$page.params.tenant}/?${$page.url.searchParams}`);
 		});
 	});
 </script>
