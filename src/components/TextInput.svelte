@@ -4,6 +4,7 @@
 	export let margin = true;
 	export let label = '';
 	export let placeholder = '';
+	export let autocomplete = '';
 </script>
 
 {#if label}
@@ -11,9 +12,23 @@
 {/if}
 
 {#if password}
-	<input type="password" id={label.replaceAll(' ', '')} bind:value class:margin {placeholder} />
+	<input
+		type="password"
+		id={label.replaceAll(' ', '')}
+		bind:value
+		class:margin
+		{placeholder}
+		{autocomplete}
+	/>
 {:else}
-	<input type="text" id={label.replaceAll(' ', '')} bind:value class:margin {placeholder} />
+	<input
+		type="text"
+		id={label.replaceAll(' ', '')}
+		bind:value
+		class:margin
+		{placeholder}
+		{autocomplete}
+	/>
 {/if}
 
 <style>
