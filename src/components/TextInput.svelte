@@ -31,6 +31,7 @@
 		box-shadow: 0 0 0 1px inset #484848;
 		border-radius: 3px;
 		outline: none;
+		transition: box-shadow 200ms;
 	}
 	input:hover {
 		box-shadow: 0 0 0 1px inset #646464;
