@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 
 	import ErrorBox from '$components/ErrorBox.svelte';
+	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
 
 	let input: HTMLInputElement;
@@ -45,40 +46,14 @@
 	<ErrorBox html={error} />
 {/if}
 
-<form on:submit={handleSubmit}>
+<Form {handleSubmit} submitText={'Continue'}>
 	<div class="tenant">
 		<span on:click={() => input.focus()} style="padding-left: 12px">cristata.app/</span>
 		<input bind:this={input} name="tenant" type="text" placeholder="your-organization" />
 	</div>
-	<input type="submit" value="Continue" />
-</form>
+</Form>
 
 <style>
-	form {
-		display: flex;
-		flex-direction: column;
-		max-width: 400px;
-		margin: 48px auto;
-	}
-
-	form input[type='submit'] {
-		margin-top: 14px;
-		height: 40px;
-		font-family: 'Rubik', sans-serif;
-		font-weight: 600;
-		font-size: 16px;
-		background-color: transparent;
-		border: 2px solid var(--textColorLighter);
-		color: var(--textColorLighter);
-		border-radius: 3px;
-	}
-	form input[type='submit']:hover {
-		background-color: rgba(255, 255, 255, 0.06);
-	}
-	form input[type='submit']:active {
-		background-color: rgba(255, 255, 255, 0.12);
-	}
-
 	div.tenant {
 		display: inline-flex;
 		align-items: center;
