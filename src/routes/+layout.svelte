@@ -2,15 +2,17 @@
 	import CristataLogo from '$components/CristataLogo.svelte';
 </script>
 
-<header>
-	<div class="brand">
-		<CristataLogo width={26} />
-		Cristata
-	</div>
-	<div class="copyright">© Jack Buehner</div>
-</header>
+<div style="width: 700px; margin: 0 auto; padding-bottom: 1px;">
+	<header>
+		<div class="brand">
+			<CristataLogo width={26} />
+			Cristata
+		</div>
+		<div class="copyright">© Jack Buehner</div>
+	</header>
 
-<article><slot /></article>
+	<article><slot /></article>
+</div>
 
 <style>
 	header {
