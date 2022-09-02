@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import type { PageData } from './$types';
-
 	import ErrorBox from '$components/ErrorBox.svelte';
 	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
 	import TextInput from '$components/TextInput.svelte';
+	import NProgress from 'nprogress';
 	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -53,6 +53,8 @@
 			return;
 		}
 
+		NProgress.start();
+
 		const res = await fetch(`http://127.0.0.1:3000/v3/${$page.params.tenant}`, {
 			method: 'POST',
 			credentials: 'include',
@@ -67,6 +69,8 @@
 		if (!res.ok) {
 			// unknown server error
 			error = `<b>An unexpected error occured.</b> Error text: [${res.status}] ${res.statusText}`;
+			NProgress.done();
+			return;
 		}
 
 		const json:
@@ -91,6 +95,8 @@
 			// unknown server error
 			error = `<b>An unexpected error occured.</b> Error text: [${res.status}] ${res.statusText}`;
 		}
+
+		NProgress.done();
 	};
 </script>
 

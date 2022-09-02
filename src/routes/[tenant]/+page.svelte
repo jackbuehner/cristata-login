@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import type { PageData } from './$types';
-
+	import Button from '$components/Button.svelte';
 	import ErrorBox from '$components/ErrorBox.svelte';
 	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
 	import TextInput from '$components/TextInput.svelte';
-	import Button from '$components/Button.svelte';
+	import NProgress from 'nprogress';
 	import { onMount } from 'svelte';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -36,6 +36,7 @@
 
 	const handleSubmit = async (evt: SubmitEvent) => {
 		evt.preventDefault();
+		NProgress.start();
 
 		const res = await fetch(`http://127.0.0.1:3000/auth/local?tenant=${data.tenant.name}`, {
 			method: 'post',
@@ -65,7 +66,11 @@
 				// sign in successful; return to app
 				returnToUrl();
 			}
-		} else if (res.status === 401) {
+		}
+
+		NProgress.done();
+
+		if (res.status === 401) {
 			error = 'The provided username or password were incorrect.';
 		} else if (res.status === 429) {
 			error = 'You have tried to sign in too many times. Please wait before trying again.';

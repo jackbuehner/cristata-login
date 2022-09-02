@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-
+	import NProgress from 'nprogress';
 	import ErrorBox from '$components/ErrorBox.svelte';
 	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
@@ -14,6 +14,8 @@
 		evt.preventDefault();
 		const tenant = input.value;
 
+		NProgress.start();
+
 		const res = await fetch(`http://127.0.0.1:3000/v3/${tenant}`, {
 			method: 'POST',
 			headers: {
@@ -24,20 +26,24 @@
 			})
 		});
 
-		if (res.status === 404) {
-			error =
-				'<b>We could not find your organization.</b> \
-        Make sure you are using the correct URL or ask \
-        someone in your organization for help.';
-			// tenant does not exist
-		} else if (res.status === 200) {
+		// tenant exists
+		if (res.status === 200) {
 			error = '';
 
 			const searchParams = $page.url.searchParams;
 			if (!searchParams.has('return')) searchParams.set('return', `https://cristata.app/${tenant}`);
 
 			goto(`/${tenant}?${searchParams}`);
-			// tenant exists
+		}
+
+		NProgress.done();
+
+		if (res.status === 404) {
+			error =
+				'<b>We could not find your organization.</b> \
+        Make sure you are using the correct URL or ask \
+        someone in your organization for help.';
+			// tenant does not exist
 		} else {
 			// something else went wrong
 			error = `<b>An unexpected error occured.</b> Error text: [${res.status}] ${res.statusText}`;

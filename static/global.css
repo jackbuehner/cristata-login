@@ -14,3 +14,20 @@ body {
 	padding: 0;
 	background-color: var(--primary);
 }
+
+/* progress bar styles */
+#nprogress {
+	position: absolute;
+	overflow: hidden;
+	top: 0;
+	height: 3px;
+	left: 0;
+	width: 100%;
+	z-index: 998;
+	background-color: transparent;
+}
+
+#nprogress .peg {
+	height: 3px;
+	background-color: hsl(253, 54%, 80%);
+}

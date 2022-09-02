@@ -1,5 +1,27 @@
 <script>
+	import { afterNavigate, beforeNavigate } from '$app/navigation';
 	import CristataLogo from '$components/CristataLogo.svelte';
+	import NProgress from 'nprogress';
+
+	// configure the navigation progress bar
+	NProgress.configure({
+		parent: 'article',
+		easing: 'ease',
+		speed: 500,
+		trickle: true,
+		trickleSpeed: 200,
+		showSpinner: false
+	});
+
+	// show progress bar on page navigate
+	beforeNavigate(() => {
+		NProgress.start();
+	});
+
+	// hide progress bar on navigation end
+	afterNavigate(() => {
+		NProgress.done();
+	});
 </script>
 
 <div style="width: 700px; margin: 0 auto; padding-bottom: 1px;">
@@ -44,9 +66,11 @@
 	}
 
 	article {
-		border: 1px solid transparent;
+		padding: 1px;
+		overflow: hidden;
 		border-radius: 4px;
 		margin: 40px;
 		background-color: #212121;
+		position: relative;
 	}
 </style>
