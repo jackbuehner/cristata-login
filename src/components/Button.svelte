@@ -1,8 +1,9 @@
 <script lang="ts">
 	export let elem: HTMLButtonElement | undefined = undefined;
+	export let style: string = '';
 </script>
 
-<button bind:this={elem} on:click on:dblclick><slot /></button>
+<button bind:this={elem} on:click on:dblclick {style}><slot /></button>
 
 <style>
 	button {
