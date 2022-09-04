@@ -6,7 +6,7 @@
 	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
 	import TextInput from '$components/TextInput.svelte';
-	import NProgress from 'nprogress';
+	import NProgress, { trickle } from 'nprogress';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
@@ -14,24 +14,8 @@
 
 	let hideCurrent = false;
 
-	let username: string;
-	let password: string;
+	let email: string;
 
-	onMount(() => {
-		const searchParams = $page.url.searchParams;
-		if (searchParams.has('ue')) {
-			username = atob(searchParams.get('ue') || '');
-			searchParams.delete('ue');
-			history.replaceState({}, '', `/${data.tenant.name}?${searchParams}`);
-		}
-		if (searchParams.has('pe')) {
-			password = atob(searchParams.get('pe') || '');
-			searchParams.delete('pe');
-			history.replaceState({}, '', `/${data.tenant.name}?${searchParams}`);
-		}
-	});
-
-	//http://127.0.0.1:5173/paladin-news?return=https%3A%2F%2Fcristata.app%2Fpaladin-news&ue=amFja19idWVobmVy&pe=amFja19idWVobmVy
 	let error = '';
 
 	const handleSubmit = async (evt: SubmitEvent) => {
@@ -39,7 +23,7 @@
 		NProgress.start();
 
 		const res = await fetch(
-			`${import.meta.env.VITE_API_BASE_URL}/auth/local?tenant=${data.tenant.name}`,
+			`${import.meta.env.VITE_API_BASE_URL}/auth/magiclogin?tenant=${data.tenant.name}`,
 			{
 				method: 'post',
 				credentials: 'include',
@@ -47,39 +31,39 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					username,
-					password,
-					redirect: false
+					destination: email,
+					redirect: false,
+					returnUrl: $page.url.searchParams.get('return') || ''
 				}),
 				redirect: 'follow',
 				cache: 'no-cache'
 			}
 		);
 
-		const json: (Record<string, unknown> & { data: Record<string, unknown> }) | undefined =
-			await res.json();
-
+		let json: Record<string, unknown> | undefined = undefined;
 		if (res.status === 200) {
-			if (json?.data?.next_step === 'change_password') {
-				// need to change password
-				const searchParams = $page.url.searchParams;
-				searchParams.set('pe', btoa(password));
-				goto(`/${data.tenant.name}/change-password/?${searchParams}`);
+			json = await res.json();
+		} else {
+			const text = await res.text();
+			if (text === 'Please specify the destination.') {
+				json = { success: false, error: 'You need to specify an email address.', expected: true };
 			} else {
-				// sign in successful; return to app
-				returnToUrl();
+				json = { success: false, error: text };
 			}
+		}
+
+		if (res.status === 200 && json?.success) {
+			// email sent
+			goto(`/${data.tenant.name}/sign-in/magic-link/sent?email=${encodeURIComponent(email)}`);
 			return;
 		}
 
 		NProgress.done();
 
-		if (res.status === 401) {
-			error = 'The provided username or password were incorrect.';
-		} else if (res.status === 429) {
-			error = 'You have tried to sign in too many times. Please wait before trying again.';
-		} else if (json?.error === 'Missing credentials') {
-			error = 'You need to provide a username and password.';
+		if (res.status === 200 && json?.error) {
+			error = JSON.stringify(json.error) + '.';
+		} else if (json?.error && typeof json.error === 'string' && json?.expected) {
+			error = json.error;
 		} else {
 			error = `<b>An unexpected error occured.</b> Error text: [${res.status}] ${
 				json?.error || res.statusText
@@ -110,27 +94,20 @@
 	</div>
 {/if}
 
-<Form {handleSubmit} submitText={'Sign in'}>
+<Form {handleSubmit} submitText={'Email me a magic link'}>
 	<TextInput
-		bind:value={username}
-		label="Username"
-		placeholder="Your username or slug"
-		autocomplete="username"
-	/>
-	<TextInput
-		bind:value={password}
-		label="Password"
-		placeholder="Your password"
-		password
-		autocomplete="current-password"
+		bind:value={email}
+		label="Email address"
+		placeholder="Your email"
+		autocomplete="email"
 	/>
 </Form>
 
 <div class="or">
 	<div>OR</div>
-	<Button href="{data.tenant.name}/sign-in/magic-link" style="width: 100%; height: 40px;"
-		>Email me a sign-in link</Button
-	>
+	<Button style="width: 100%; height: 40px;" href="/{data.tenant.name}">
+		Use a username and password
+	</Button>
 </div>
 
 <div class="alt">
