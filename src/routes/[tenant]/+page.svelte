@@ -31,7 +31,6 @@
 		}
 	});
 
-	//http://127.0.0.1:5173/paladin-news?return=https%3A%2F%2Fcristata.app%2Fpaladin-news&ue=amFja19idWVobmVy&pe=amFja19idWVobmVy
 	let error = '';
 
 	const handleSubmit = async (evt: SubmitEvent) => {
@@ -128,8 +127,11 @@
 
 <div class="or">
 	<div>OR</div>
-	<Button href="{data.tenant.name}/sign-in/magic-link" style="width: 100%; height: 40px;"
-		>Email me a sign-in link</Button
+	<Button
+		href="{data.tenant.name}/sign-in/magic-link?return={encodeURIComponent(
+			$page.url.searchParams.get('return') || ''
+		)}"
+		style="width: 100%; height: 40px;">Email me a sign-in link</Button
 	>
 </div>
 

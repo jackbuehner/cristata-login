@@ -106,7 +106,12 @@
 
 <div class="or">
 	<div>OR</div>
-	<Button style="width: 100%; height: 40px;" href="/{data.tenant.name}">
+	<Button
+		style="width: 100%; height: 40px;"
+		href="/{data.tenant.name}?return={encodeURIComponent(
+			$page.url.searchParams.get('return') || ''
+		)}"
+	>
 		Use a username and password
 	</Button>
 </div>

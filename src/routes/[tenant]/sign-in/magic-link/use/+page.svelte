@@ -71,7 +71,9 @@
 		<ErrorBox html={error} />
 		<Button
 			style="width: 100%; height: 40px; margin-top: 20px;"
-			href="/{data.tenant.name}/sign-in/magic-link"
+			href="/{data.tenant.name}/sign-in/magic-link?return={encodeURIComponent(
+				$page.url.searchParams.get('return') || ''
+			)}"
 		>
 			Get a new magic link
 		</Button>
