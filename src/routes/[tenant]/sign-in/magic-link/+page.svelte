@@ -61,6 +61,7 @@
 		NProgress.done();
 
 		if (res.status === 200 && json?.error) {
+			if (typeof json.error === 'string') error = json.error + '.';
 			error = JSON.stringify(json.error) + '.';
 		} else if (json?.error && typeof json.error === 'string' && json?.expected) {
 			error = json.error;
