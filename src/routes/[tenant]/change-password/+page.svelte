@@ -72,9 +72,16 @@
 		});
 
 		if (!res.ok) {
-			// unknown server error
-			error = `<b>An unexpected error occured.</b> Error text: [${res.status}] ${res.statusText}`;
-			NProgress.done();
+			try {
+				const { errors } = await res.json();
+				const errorCode = errors[0].extensions.code.replace('GRAPHQL_', '');
+				const reason = errors[0].message.split(':')[0];
+				error = `<b>An unexpected error occured.</b> Error text: [${errorCode}] ${reason}`;
+			} catch (e) {
+				// unknown server error
+				error = `<b>An unexpected error occured.</b> Error text: [${res.status}] ${res.statusText}`;
+				NProgress.done();
+			}
 			return;
 		}
 
