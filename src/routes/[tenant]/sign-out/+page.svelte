@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Header from '$components/Header.svelte';
 	import { onMount } from 'svelte';
@@ -13,7 +12,7 @@
 			},
 			cache: 'no-cache'
 		}).finally(() => {
-			goto(`/${$page.params.tenant}/?${$page.url.searchParams}`);
+			window.location.href = `/${$page.params.tenant}/?${$page.url.searchParams}`;
 		});
 	});
 </script>
