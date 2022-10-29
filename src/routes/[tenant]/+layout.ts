@@ -1,3 +1,4 @@
+import { browser } from '$app/environment';
 import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async ({ params }) => {
@@ -12,12 +13,25 @@ export const load: LayoutLoad = async ({ params }) => {
 	});
 	const tenantObj = (await tenantRes.json())?.data?.tenant;
 
-	const authRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		credentials: 'include'
+	let isResolved = false;
+	const [, currentUser]: [Response, null | Record<string, unknown>] = await fetch(
+		`${import.meta.env.VITE_API_BASE_URL}/auth`,
+		{
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			credentials: 'include'
+		}
+	).then(async (res) => {
+		if (res.ok) {
+			const currentUser = await res.json();
+			if (browser) isResolved = true;
+			return [res, currentUser];
+		} else {
+			if (browser) isResolved = true;
+			return [res, null];
+		}
 	});
 
 	return {
@@ -25,15 +39,21 @@ export const load: LayoutLoad = async ({ params }) => {
 			name: (tenantObj?.tenant || params.tenant) as string,
 			displayName: (tenantObj?.displayName || tenantObj?.tenant || params.tenant) as string
 		},
-		currentUser: authRes.ok
-			? await (async () => {
-					const currentUser = await authRes?.json();
-					return {
+		/**
+		 * If user found: `{ _id: string, name: string, email: string }`;
+		 *
+		 * If no found user: `null`;
+		 *
+		 * If still loading: `undefined`;
+		 */
+		currentUser: isResolved
+			? currentUser
+				? {
 						_id: currentUser._id as string,
 						name: currentUser.name as string,
 						email: currentUser.email as string | undefined | null
-					};
-			  })()
-			: null
+				  }
+				: null
+			: undefined
 	};
 };
