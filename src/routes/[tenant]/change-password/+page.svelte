@@ -55,6 +55,11 @@
 
 		NProgress.start();
 
+		// prettier-ignore
+		const escapedOldPassword = oldPassword.replace(/"/g, "\\\"");
+		// prettier-ignore
+		const escapedNewPassword = newPassword.replace(/"/g, "\\\"");
+
 		const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/v3/${$page.params.tenant}`, {
 			method: 'POST',
 			credentials: 'include',
@@ -62,7 +67,7 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				query: `mutation { userPasswordChange(oldPassword: "${oldPassword}", newPassword: "${newPassword}") { _id } }`
+				query: `mutation __Silent_ChangePassword { userPasswordChange(oldPassword: "${escapedOldPassword}", newPassword: "${escapedNewPassword}") { _id } }`
 			})
 		});
 
