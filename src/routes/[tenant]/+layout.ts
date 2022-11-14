@@ -27,7 +27,9 @@ export const load: LayoutLoad = async ({ params }) => {
 		if (res.ok) {
 			const currentUser = await res.json();
 			if (browser) isResolved = true;
-			return [res, currentUser];
+
+			if (currentUser.tenant === params.tenant) return [res, currentUser];
+			return [res, null];
 		} else {
 			if (browser) isResolved = true;
 			return [res, null];
