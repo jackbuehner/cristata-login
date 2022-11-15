@@ -25,11 +25,15 @@ export const load: LayoutLoad = async ({ params }) => {
 		}
 	).then(async (res) => {
 		if (res.ok) {
-			const currentUser = await res.json();
-			if (browser) isResolved = true;
+			try {
+				const currentUser = await res.json();
+				if (browser) isResolved = true;
 
-			if (currentUser.tenant === params.tenant) return [res, currentUser];
-			return [res, null];
+				if (currentUser.tenant === params.tenant) return [res, currentUser];
+				return [res, null];
+			} catch (error) {
+				return [res, null];
+			}
 		} else {
 			if (browser) isResolved = true;
 			return [res, null];
