@@ -11,7 +11,17 @@ export const load: LayoutLoad = async ({ params }) => {
 			query: 'query { tenant { name, displayName } }'
 		})
 	});
-	const tenantObj = (await tenantRes.json())?.data?.tenant;
+
+	const tenantObj = await (async (): Promise<{ name: string; displayName: string }> => {
+		if (tenantRes.ok) {
+			const data = (await tenantRes.json())?.data?.tenant;
+			return { name: data.name, displayName: data.displayName || data.tenant };
+		}
+		if (tenantRes.status === 402) {
+			return { name: params.tenant, displayName: params.tenant + ' (unpaid)' };
+		}
+		return { name: params.tenant, displayName: params.tenant + ' (unpaid)' };
+	})();
 
 	let isResolved = false;
 	const [, currentUser]: [Response, null | Record<string, unknown>] = await fetch(
@@ -42,8 +52,8 @@ export const load: LayoutLoad = async ({ params }) => {
 
 	return {
 		tenant: {
-			name: (tenantObj?.tenant || params.tenant) as string,
-			displayName: (tenantObj?.displayName || tenantObj?.tenant || params.tenant) as string
+			name: tenantObj.name,
+			displayName: tenantObj.displayName
 		},
 		/**
 		 * If user found: `{ _id: string, name: string, email: string }`;
