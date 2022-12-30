@@ -6,6 +6,7 @@
 	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
 	import TextInput from '$components/TextInput.svelte';
+	import { PUBLIC_APP_URL, PUBLIC_SERVER_URL } from '$env/static/public';
 	import NProgress from 'nprogress';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
@@ -37,23 +38,20 @@
 		evt.preventDefault();
 		NProgress.start();
 
-		const res = await fetch(
-			`${import.meta.env.VITE_API_BASE_URL}/auth/local?tenant=${data.tenant.name}`,
-			{
-				method: 'post',
-				credentials: 'include',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					username,
-					password,
-					redirect: false
-				}),
-				redirect: 'follow',
-				cache: 'no-cache'
-			}
-		);
+		const res = await fetch(`${PUBLIC_SERVER_URL}/auth/local?tenant=${data.tenant.name}`, {
+			method: 'post',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				username,
+				password,
+				redirect: false
+			}),
+			redirect: 'follow',
+			cache: 'no-cache'
+		});
 
 		const json: (Record<string, unknown> & { data: Record<string, unknown> }) | undefined =
 			await res.json();
@@ -88,7 +86,7 @@
 
 	const returnToUrl = () => {
 		const searchParams = $page.url.searchParams;
-		const returnUrl = searchParams.get('return') || `https://cristata.app/${$page.params.tenant}`;
+		const returnUrl = searchParams.get('return') || `${PUBLIC_APP_URL}/${$page.params.tenant}`;
 		goto(returnUrl);
 	};
 </script>

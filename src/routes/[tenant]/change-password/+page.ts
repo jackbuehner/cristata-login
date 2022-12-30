@@ -1,7 +1,8 @@
+import { PUBLIC_SERVER_URL } from '$env/static/public';
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async () => {
-	const authRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth`, {
+	const authRes = await fetch(`${PUBLIC_SERVER_URL}/auth`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json'

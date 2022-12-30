@@ -1,8 +1,9 @@
 import { browser } from '$app/environment';
+import { PUBLIC_SERVER_URL } from '$env/static/public';
 import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async ({ params }) => {
-	const tenantRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/v3/${params.tenant}`, {
+	const tenantRes = await fetch(`${PUBLIC_SERVER_URL}/v3/${params.tenant}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
@@ -25,7 +26,7 @@ export const load: LayoutLoad = async ({ params }) => {
 
 	let isResolved = false;
 	const [, currentUser]: [Response, null | Record<string, unknown>] = await fetch(
-		`${import.meta.env.VITE_API_BASE_URL}/auth`,
+		`${PUBLIC_SERVER_URL}/auth`,
 		{
 			method: 'GET',
 			headers: {

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import NProgress from 'nprogress';
 	import ErrorBox from '$components/ErrorBox.svelte';
 	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
+	import { PUBLIC_APP_URL, PUBLIC_SERVER_URL } from '$env/static/public';
+	import NProgress from 'nprogress';
 
 	let input: HTMLInputElement;
 
@@ -16,7 +17,7 @@
 
 		NProgress.start();
 
-		const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/v3/${tenant}`, {
+		const res = await fetch(`${PUBLIC_SERVER_URL}/v3/${tenant}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -31,7 +32,7 @@
 			error = '';
 
 			const searchParams = $page.url.searchParams;
-			if (!searchParams.has('return')) searchParams.set('return', `https://cristata.app/${tenant}`);
+			if (!searchParams.has('return')) searchParams.set('return', `${PUBLIC_APP_URL}/${tenant}`);
 
 			goto(`/${tenant}?${searchParams}`);
 			return;

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Header from '$components/Header.svelte';
+	import { PUBLIC_SERVER_URL } from '$env/static/public';
 	import { onMount } from 'svelte';
 
 	onMount(() => {
-		fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/clear`, {
+		fetch(`${PUBLIC_SERVER_URL}/auth/clear`, {
 			method: 'post',
 			credentials: 'include',
 			headers: {

@@ -5,6 +5,7 @@
 	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
 	import TextInput from '$components/TextInput.svelte';
+	import { PUBLIC_SERVER_URL } from '$env/static/public';
 	import NProgress from 'nprogress';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
@@ -60,7 +61,7 @@
 		// prettier-ignore
 		const escapedNewPassword = newPassword.replace(/"/g, "\\\"");
 
-		const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/v3/${$page.params.tenant}`, {
+		const res = await fetch(`${PUBLIC_SERVER_URL}/v3/${$page.params.tenant}`, {
 			method: 'POST',
 			credentials: 'include',
 			headers: {

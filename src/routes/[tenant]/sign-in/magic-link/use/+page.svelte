@@ -3,10 +3,9 @@
 	import { page } from '$app/stores';
 	import Button from '$components/Button.svelte';
 	import ErrorBox from '$components/ErrorBox.svelte';
-	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
-	import TextInput from '$components/TextInput.svelte';
-	import NProgress, { trickle } from 'nprogress';
+	import { PUBLIC_APP_URL, PUBLIC_SERVER_URL } from '$env/static/public';
+	import NProgress from 'nprogress';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
@@ -22,7 +21,7 @@
 		NProgress.start();
 
 		const res = await fetch(
-			`${import.meta.env.VITE_API_BASE_URL}/auth/magiclogin/callback?tenant=${
+			`${PUBLIC_SERVER_URL}/auth/magiclogin/callback?tenant=${
 				data.tenant.name
 			}&token=${encodeURIComponent(token)}&redirect=false`,
 			{
@@ -59,7 +58,7 @@
 
 	const returnToUrl = () => {
 		const searchParams = $page.url.searchParams;
-		const returnUrl = searchParams.get('return') || `https://cristata.app/${$page.params.tenant}`;
+		const returnUrl = searchParams.get('return') || `${PUBLIC_APP_URL}/${$page.params.tenant}`;
 		goto(returnUrl);
 	};
 </script>
