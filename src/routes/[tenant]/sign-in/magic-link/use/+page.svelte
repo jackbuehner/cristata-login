@@ -16,8 +16,10 @@
 	const token = $page.url.searchParams.get('token') || '';
 
 	let error = '';
+	let signingIn = false;
 
-	onMount(async () => {
+	async function magicSignIn() {
+		signingIn = true;
 		NProgress.start();
 
 		const res = await fetch(
@@ -44,6 +46,7 @@
 			return;
 		}
 
+		signingIn = false;
 		NProgress.done();
 
 		if (res.status === 500 && json?.error) {
@@ -54,7 +57,7 @@
 				json?.error || res.statusText
 			}`;
 		}
-	});
+	}
 
 	const returnToUrl = () => {
 		const searchParams = $page.url.searchParams;
@@ -63,11 +66,21 @@
 	};
 </script>
 
-<Header heading="Signing in to Cristata" caption={error ? '' : 'Please wait a moment'} />
+<Header
+	heading="Sign{signingIn ? 'ing' : ''} in to Cristata"
+	caption={error ? '' : signingIn ? 'Please wait a moment' : ''}
+/>
 
 {#if error}
 	<div class="box">
 		<ErrorBox html={error} />
+		<Button
+			style="width: 100%; height: 40px; margin-top: 20px;"
+			on:click={magicSignIn}
+			disabled={signingIn}
+		>
+			Try again
+		</Button>
 		<Button
 			style="width: 100%; height: 40px; margin-top: 20px;"
 			href="/{data.tenant.name}/sign-in/magic-link?return={encodeURIComponent(
@@ -75,6 +88,16 @@
 			)}"
 		>
 			Get a new magic link
+		</Button>
+	</div>
+{:else}
+	<div class="box">
+		<Button
+			style="width: 100%; height: 40px; margin-top: 20px;"
+			on:click={magicSignIn}
+			disabled={signingIn}
+		>
+			Confirm sign in
 		</Button>
 	</div>
 {/if}
