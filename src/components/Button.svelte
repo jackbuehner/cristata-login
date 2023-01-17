@@ -2,12 +2,13 @@
 	export let elem: HTMLButtonElement | undefined = undefined;
 	export let style: string = '';
 	export let href: string = '';
+	export let disabled: boolean = false;
 </script>
 
 {#if href}
 	<a {href} {style}><slot /></a>
 {:else}
-	<button bind:this={elem} on:click on:dblclick {style}><slot /></button>
+	<button bind:this={elem} on:click on:dblclick {style} {disabled}><slot /></button>
 {/if}
 
 <style>
@@ -29,6 +30,7 @@
 		min-width: 60px;
 		outline: none;
 		transition: background-color 200ms;
+		box-sizing: border-box;
 	}
 	button:hover,
 	a:hover,
