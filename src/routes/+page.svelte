@@ -32,7 +32,8 @@
 			error = '';
 
 			const searchParams = $page.url.searchParams;
-			if (!searchParams.has('return')) searchParams.set('return', `${PUBLIC_APP_URL}/${tenant}`);
+			if (!searchParams.has('return'))
+				searchParams.set('return', `${searchParams.get('appOrigin') || PUBLIC_APP_URL}/${tenant}`);
 
 			goto(`/${tenant}?${searchParams}`);
 			return;
