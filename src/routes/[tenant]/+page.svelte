@@ -7,6 +7,7 @@
 	import Header from '$components/Header.svelte';
 	import TextInput from '$components/TextInput.svelte';
 	import { PUBLIC_APP_URL, PUBLIC_SERVER_URL } from '$env/static/public';
+	import { modifySessionCookie } from '$utils/modifySessionCookie';
 	import NProgress from 'nprogress';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
@@ -47,7 +48,8 @@
 			body: JSON.stringify({
 				username,
 				password,
-				redirect: false
+				redirect: false,
+				disableHttpOnly: data.isFromTauri
 			}),
 			redirect: 'follow',
 			cache: 'no-cache'
@@ -63,6 +65,8 @@
 				searchParams.set('pe', btoa(password));
 				goto(`/${data.tenant.name}/change-password/?${searchParams}`);
 			} else {
+				modifySessionCookie();
+
 				// sign in successful; return to app
 				returnToUrl();
 			}
@@ -87,8 +91,7 @@
 	const returnToUrl = () => {
 		const searchParams = $page.url.searchParams;
 		const returnUrl =
-			searchParams.get('return') ||
-			`${searchParams.get('appOrigin') || PUBLIC_APP_URL}/${$page.params.tenant}`;
+			searchParams.get('return') || `${data.appOrigin || PUBLIC_APP_URL}/${$page.params.tenant}`;
 		goto(returnUrl);
 	};
 </script>
@@ -125,15 +128,17 @@
 	/>
 </Form>
 
-<div class="or">
-	<div>OR</div>
-	<Button
-		href="{data.tenant.name}/sign-in/magic-link?return={encodeURIComponent(
-			$page.url.searchParams.get('return') || ''
-		)}"
-		style="width: 100%; height: 40px;">Email me a sign-in link</Button
-	>
-</div>
+{#if !data.isFromTauri}
+	<div class="or">
+		<div>OR</div>
+		<Button
+			href="{data.tenant.name}/sign-in/magic-link?return={encodeURIComponent(
+				$page.url.searchParams.get('return') || ''
+			)}"
+			style="width: 100%; height: 40px;">Email me a sign-in link</Button
+		>
+	</div>
+{/if}
 
 <div class="alt">
 	<div>

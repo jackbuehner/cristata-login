@@ -5,6 +5,7 @@
 	import ErrorBox from '$components/ErrorBox.svelte';
 	import Header from '$components/Header.svelte';
 	import { PUBLIC_APP_URL, PUBLIC_SERVER_URL } from '$env/static/public';
+	import { modifySessionCookie } from '$utils/modifySessionCookie';
 	import NProgress from 'nprogress';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
@@ -39,9 +40,8 @@
 
 		let json: Record<string, unknown> = await res.json();
 
-		console.log(json);
-
 		if (res.status === 200) {
+			modifySessionCookie();
 			returnToUrl();
 			return;
 		}
@@ -62,8 +62,7 @@
 	const returnToUrl = () => {
 		const searchParams = $page.url.searchParams;
 		const returnUrl =
-			searchParams.get('return') ||
-			`${searchParams.get('appOrigin') || PUBLIC_APP_URL}/${$page.params.tenant}`;
+			searchParams.get('return') || `${data.appOrigin || PUBLIC_APP_URL}/${$page.params.tenant}`;
 		goto(returnUrl);
 	};
 </script>

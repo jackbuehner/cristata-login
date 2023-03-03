@@ -6,8 +6,11 @@
 	import Header from '$components/Header.svelte';
 	import { PUBLIC_APP_URL, PUBLIC_SERVER_URL } from '$env/static/public';
 	import NProgress from 'nprogress';
+	import type { PageData } from './$types';
 
 	let input: HTMLInputElement;
+
+	export let data: PageData;
 
 	let error = '';
 
@@ -33,7 +36,7 @@
 
 			const searchParams = $page.url.searchParams;
 			if (!searchParams.has('return'))
-				searchParams.set('return', `${searchParams.get('appOrigin') || PUBLIC_APP_URL}/${tenant}`);
+				searchParams.set('return', `${data.appOrigin || PUBLIC_APP_URL}/${tenant}`);
 
 			goto(`/${tenant}?${searchParams}`);
 			return;

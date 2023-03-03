@@ -68,8 +68,7 @@
 	const returnToUrl = () => {
 		const searchParams = $page.url.searchParams;
 		const returnUrl =
-			searchParams.get('return') ||
-			`${searchParams.get('appOrigin') || PUBLIC_APP_URL}/${$page.params.tenant}`;
+			searchParams.get('return') || `${data.appOrigin || PUBLIC_APP_URL}/${$page.params.tenant}`;
 		goto(returnUrl);
 	};
 </script>
