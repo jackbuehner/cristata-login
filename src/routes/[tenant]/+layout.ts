@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import { PUBLIC_SERVER_URL } from '$env/static/public';
+import { redirect } from '@sveltejs/kit';
 import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async ({ params }) => {
@@ -21,7 +22,7 @@ export const load: LayoutLoad = async ({ params }) => {
 		if (tenantRes.status === 402) {
 			return { name: params.tenant, displayName: params.tenant + ' (unpaid)' };
 		}
-		return { name: params.tenant, displayName: params.tenant + ' (unpaid)' };
+		throw redirect(307, '/');
 	})();
 
 	let isResolved = false;
