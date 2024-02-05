@@ -1,59 +1,24 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
 	import ErrorBox from '$components/ErrorBox.svelte';
 	import Form from '$components/Form.svelte';
 	import Header from '$components/Header.svelte';
-	import { PUBLIC_APP_URL, PUBLIC_SERVER_URL } from '$env/static/public';
 	import NProgress from 'nprogress';
-	import type { PageData } from './$types';
 
 	let input: HTMLInputElement;
-
-	export let data: PageData;
 
 	let error = '';
 
 	const handleSubmit = async (evt: SubmitEvent) => {
 		evt.preventDefault();
-		const tenant = input.value;
-
 		NProgress.start();
 
-		const res = await fetch(`${PUBLIC_SERVER_URL}/v3/${tenant}`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				query: 'query { userPublic(_id: "000000000000000000000000") { _id } }'
-			})
-		});
-
-		// tenant exists
-		if (res.status === 200) {
-			error = '';
-
-			const searchParams = $page.url.searchParams;
-			if (!searchParams.has('return'))
-				searchParams.set('return', `${data.appOrigin || PUBLIC_APP_URL}/${tenant}`);
-
-			goto(`/${tenant}?${searchParams}`);
-			return;
-		}
-
-		NProgress.done();
-
-		if (res.status === 404) {
+		setTimeout(() => {
+			NProgress.done();
 			error =
 				'<b>We could not find your organization.</b> \
-        Make sure you are using the correct URL or ask \
-        someone in your organization for help.';
-			// tenant does not exist
-		} else {
-			// something else went wrong
-			error = `<b>An unexpected error occured.</b> Error text: [${res.status}] ${res.statusText}`;
-		}
+		Make sure you are using the correct URL or ask \
+		someone in your organization for help.';
+		}, 500)
 	};
 </script>
 
